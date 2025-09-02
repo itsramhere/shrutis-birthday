@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter Page</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Courier New", Courier, monospace;
+      background: #f9f5f0 url("letter_texture.png") no-repeat center/cover;
+      color: #333;
+    }
+
+    .photo {
+      width: 100%;
+      height: 1000px;
+      background: #ddd url("actual_cincy.jpg") center/cover no-repeat;
+      border-bottom: 2px solid #bbb;
+    }
+
+    .letter {
+      max-width: 800px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 20px 30px;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .line {
+      display: inline-block;
+      border-right: 3px solid black;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="photo"></div>
+  <div class="letter" id="letter"></div>
+
+  <script>
+    const text = `Ohio, the place where your brother was born. I don't know much about your times here, maybe because 
+    I haven't paid much attention to what you said or maybe because you haven't told me much about it. But I'm not here to talk about that. All that matters is that when you lived there, you were the goddamn cutest baby ever - and I 
+    mean it. I love you my cute baby, and I can't wait to spend more times with this goddamn cutie pie who has decided
+    to be my pumpkin baby. Mwah. I love you soooo much, happy birthday meri jaan - Have the best birthday ever!! 
+    I hope you have the best day ever and an amazing year ahead (with me hopefully)`;
+
+    const letterEl = document.getElementById("letter");
+    const words = text.split(" ");
+    let currentLine = "";
+    const lines = [];
+
+    // Helper: measure line width
+    const tester = document.createElement("span");
+    tester.style.visibility = "hidden";
+    tester.style.whiteSpace = "nowrap";
+    tester.style.position = "absolute";
+    tester.style.left = "-9999px";
+    letterEl.appendChild(tester);
+
+    words.forEach(word => {
+      const tryLine = currentLine ? currentLine + " " + word : word;
+      tester.textContent = tryLine;
+      if (tester.offsetWidth > letterEl.clientWidth - 60) { 
+        // commit current line and start new one
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = tryLine;
+      }
+    });
+    if (currentLine) lines.push(currentLine);
+    tester.remove();
+
+    // Function to type a line
+    function typeLine(line) {
+      return new Promise(resolve => {
+        const span = document.createElement("span");
+        span.className = "line";
+        letterEl.appendChild(span);
+        letterEl.appendChild(document.createElement("br"));
+
+        let i = 0;
+        const cursorBlink = setInterval(() => {
+          span.style.borderRight = span.style.borderRight ? "" : "3px solid black";
+        }, 500);
+
+        const typer = setInterval(() => {
+          span.textContent = line.slice(0, i + 1);
+          i++;
+          if (i === line.length) {
+            clearInterval(typer);
+            clearInterval(cursorBlink);
+            span.style.borderRight = "none";
+            resolve();
+          }
+        }, 50); // speed per character
+      });
+    }
+
+    // Sequential typing
+    (async function run() {
+      for (const line of lines) {
+        await typeLine(line);
+      }
+    })();
+  </script>
+</body>
+</html>

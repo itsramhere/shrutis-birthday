@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Gate</title>
+  <style>
+    body {
+      background-color: lightpink;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    input {
+      padding: 8px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      border: none;
+      background-color: #ff69b4;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff85c1;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Enter the magic word:</h2>
+    <input type="text" id="wordInput" placeholder="Type here...">
+    <br>
+    <button onclick="checkWord()">Submit</button>
+    <p id="errorMsg" class="error">❌ I can't believe you got it wrong</p>
+  </div>
+
+  <script>
+    function checkWord() {
+      const input = document.getElementById("wordInput").value.trim();
+      const errorMsg = document.getElementById("errorMsg");
+      if (input === "angel") {
+        window.location.href = "home.html";
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>

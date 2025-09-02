@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dot Navigation with Plane</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: url("world_map.jpg") no-repeat center center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Dots */
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid black;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .dot:hover {
+      transform: scale(1.2);
+      border: 4px solid red
+    }
+
+    /* Dot positions */
+    .dot1 { left: 25%; top: 24%; }   /* cincy*/
+    .dot2 { left: 27%; top: 18%; } /* toronto */
+    .dot3 { right: 29.5%; top: 35%; }  /* saharsa */
+    .dot4 { right: 30%; top: 36%; } /* jamshedpur */
+    .dot5 { top: 32%; right: 30.5%; transform: translateX(-50%); } /* delhi */
+
+    /* Plane */
+    .plane {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      font-size: 28px;
+      transition: transform 1.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Dots -->
+  <div class="dot dot1" onclick="flyToDot('cincy.html', this)"></div>
+  <div class="dot dot2" onclick="flyToDot('toronto.html', this)"></div>
+  <div class="dot dot3" onclick="flyToDot('saharsa.html', this)"></div>
+  <div class="dot dot4" onclick="flyToDot('jamshedpur.html', this)"></div>
+  <div class="dot dot5" onclick="flyToDot('delhi.html', this)"></div>
+
+  <!-- Plane -->
+  <div class="plane" id="plane">✈️</div>
+
+  <script>
+    function flyToDot(url, dot) {
+      const plane = document.getElementById("plane");
+      const dotRect = dot.getBoundingClientRect();
+      const bodyRect = document.body.getBoundingClientRect();
+
+      // Dot center relative to body
+      const dotX = dotRect.left + dotRect.width/2 - bodyRect.left;
+      const dotY = dotRect.top + dotRect.height/2 - bodyRect.top;
+
+      // Plane current position
+      const planeRect = plane.getBoundingClientRect();
+      const planeX = planeRect.left + planeRect.width/2 - bodyRect.left;
+      const planeY = planeRect.top + planeRect.height/2 - bodyRect.top;
+
+      // Translate needed
+      const dx = dotX - planeX;
+      const dy = dotY - planeY;
+
+      // Fly plane
+      plane.style.transform = `translate(${dx}px, ${dy}px)`;
+
+      // After animation ends, go to page
+      setTimeout(() => {
+        window.location.href = url;
+      }, 1500); // duration matches transition
+    }
+  </script>
+</body>
+</html>

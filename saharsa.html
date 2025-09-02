@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Letter Page</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Courier New", Courier, monospace;
+      background: #f9f5f0 url("letter_texture.png") no-repeat center/cover;
+      color: #333;
+    }
+
+    .photo {
+      width: 50%;
+      height: 1500px;
+      background: #ddd url("saharsa.jpg") center/cover no-repeat;
+      border-bottom: 2px solid #bbb;
+    }
+
+    .letter {
+      max-width: 800px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 20px 30px;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .line {
+      display: inline-block;
+      border-right: 3px solid black;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="photo"></div>
+  <div class="letter" id="letter"></div>
+
+  <script>
+    const text = `Toronto, the place you moved to, after you were born. That's where you decided to be the cutest newborn
+    baby, with those big eyes, huge lips and cute hair. I can't even imagine how happy your parents must've been, to know
+    that they had such a cute baby. A child like you is a blessing for the people who have committed the best possible
+    karma, and I mean this. I am so grateful that I got to be in his baby's life (could've been sooner, but I'll take it),
+    and hopefully I'm in this cute baby's life forever. Happiest of birthdays my dear pumpkin. I love you so goddamn much,
+    I cannot wait one bit to celebrate this special day with you in real life.`;
+
+    const letterEl = document.getElementById("letter");
+    const words = text.split(" ");
+    let currentLine = "";
+    const lines = [];
+
+    // Helper: measure line width
+    const tester = document.createElement("span");
+    tester.style.visibility = "hidden";
+    tester.style.whiteSpace = "nowrap";
+    tester.style.position = "absolute";
+    tester.style.left = "-9999px";
+    letterEl.appendChild(tester);
+
+    words.forEach(word => {
+      const tryLine = currentLine ? currentLine + " " + word : word;
+      tester.textContent = tryLine;
+      if (tester.offsetWidth > letterEl.clientWidth - 60) { 
+        // commit current line and start new one
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = tryLine;
+      }
+    });
+    if (currentLine) lines.push(currentLine);
+    tester.remove();
+
+    // Function to type a line
+    function typeLine(line) {
+      return new Promise(resolve => {
+        const span = document.createElement("span");
+        span.className = "line";
+        letterEl.appendChild(span);
+        letterEl.appendChild(document.createElement("br"));
+
+        let i = 0;
+        const cursorBlink = setInterval(() => {
+          span.style.borderRight = span.style.borderRight ? "" : "3px solid black";
+        }, 500);
+
+        const typer = setInterval(() => {
+          span.textContent = line.slice(0, i + 1);
+          i++;
+          if (i === line.length) {
+            clearInterval(typer);
+            clearInterval(cursorBlink);
+            span.style.borderRight = "none";
+            resolve();
+          }
+        }, 50); // speed per character
+      });
+    }
+
+    // Sequential typing
+    (async function run() {
+      for (const line of lines) {
+        await typeLine(line);
+      }
+    })();
+  </script>
+</body>
+</html>
